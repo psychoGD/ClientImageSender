@@ -55,6 +55,7 @@ namespace ClientImageSender
                     {
                         byte[] bytes = (byte[])(new ImageConverter()).ConvertTo(Image, typeof(byte[]));
                         socket.Send(bytes);
+                        imageSource = null;
                     }
                 }
 
