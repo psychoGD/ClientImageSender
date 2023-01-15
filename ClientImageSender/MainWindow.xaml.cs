@@ -35,7 +35,8 @@ namespace ClientImageSender
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 BitmapImage myBitmapImage = new BitmapImage(new Uri($@"{files[0]}", UriKind.Relative));
                 myBitmapImage.CacheOption = BitmapCacheOption.Default;
-                mainViewModel.Image= myBitmapImage;
+                    
+                mainViewModel.ImageTest= myBitmapImage;
                 mainViewModel.ImageSource = myBitmapImage.UriSource.ToString();
 
             }

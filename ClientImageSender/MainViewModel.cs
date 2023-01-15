@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Drawing;
+using System.IO;
 //using System.Windows.Controls;
 
 namespace ClientImageSender
@@ -26,9 +27,22 @@ namespace ClientImageSender
             set { imageSource = value; OnPropertyChanged(); }
         }
 
-        public BitmapImage Image { get; set; }
+        public BitmapImage ImageTest { get; set; }
 
         public bool isConnected { get; set; } = true;
+
+        public byte[] BitmapImageToBytes(BitmapImage image)
+        {
+            byte[] data;
+            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(image));
+            using (MemoryStream ms = new MemoryStream())
+            {
+                encoder.Save(ms);
+                data = ms.ToArray();
+            }
+            return data;
+        }
 
 
         public MainViewModel()
@@ -49,13 +63,27 @@ namespace ClientImageSender
             }
             ClickCommand = new RelayCommand(o =>
             {
+                MessageBox.Show(socket.Connected.ToString());
                 if (isConnected)
                 {
                     if (socket.Connected)
                     {
-                        byte[] bytes = (byte[])(new ImageConverter()).ConvertTo(Image, typeof(byte[]));
-                        socket.Send(bytes);
-                        imageSource = null;
+                        //var image = new System.Windows.Controls.Image();
+                        //var imageSource2 = new ImageSource();
+                        //byte[] bytes = (byte[])(new ImageConverter()).ConvertTo(Image, typeof(byte[]));
+                        try
+                        {
+                            var bytes = BitmapImageToBytes(ImageTest);
+                            MessageBox.Show(bytes.Length.ToString());
+                            socket.Send(bytes);
+                            ImageSource = "";
+                            ImageTest = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        
                     }
                 }
 
